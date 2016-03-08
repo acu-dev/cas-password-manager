@@ -4,53 +4,46 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import javax.naming.directory.Attribute;
-import javax.naming.directory.BasicAttribute;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.ModificationItem;
+import net.unicon.cas.passwordmanager.UserNotFoundException;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.InitializingBean;
+import org.ldaptive.Connection;
+import org.ldaptive.Credential;
+import org.ldaptive.LdapException;
+import org.ldaptive.Response;
+import org.ldaptive.ResultCode;
+import org.ldaptive.extended.PasswordModifyOperation;
+import org.ldaptive.extended.PasswordModifyRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class OpenLdapLdapServer extends AbstractLdapServer implements
-		LdapServer, InitializingBean {
+public class OpenLdapLdapServer extends AbstractLdapServer {
 
-	private final Log logger = LogFactory.getLog(this.getClass());
+	private final Logger logger = LoggerFactory.getLogger(OpenLdapLdapServer.class);
+	
 	private String encryptionAlgorithm;
 	
-	@Override
-	public void setPassword(String username, String password) {
-		
-		logger.debug("Setting password for " + username);
-		
+  @Override
+	protected byte[] encodePassword(String password) {
 		String passwordText = null;
 		
 		if(encryptionAlgorithm != null && !encryptionAlgorithm.isEmpty()) {
 			String encryptedPassword = encrypt(password);
 			passwordText = "{" + encryptionAlgorithm + "}" + encryptedPassword;
 		} else {
-			logger.debug("Setting unencrypted password for " + username +"! Consider setting the "
-					+ "encryptionAlgorithm property of this bean in passwordManagerContext.xml!");
 			passwordText = password;
 		}
-		Attribute passwordAttribute = new BasicAttribute(passwordAttr, passwordText);
 		
-		ModificationItem[] modificationItems = new ModificationItem[1];
-		modificationItems[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, passwordAttribute);
-		
-		ldapModify(username, modificationItems);
+		return passwordText.getBytes();
 	}
 	
 	private String encrypt(String plainText) {
-		
 		MessageDigest md = null;
 		try {
 			md = MessageDigest.getInstance(encryptionAlgorithm);
 			md.update(plainText.getBytes("UTF-8"));
 		} catch(NoSuchAlgorithmException ex) {
-			logger.error("No such algorithm: " + encryptionAlgorithm);
+			logger.error("No such algorithm: {}", encryptionAlgorithm);
 			throw new RuntimeException("No such algorithm: " + encryptionAlgorithm,ex);
 		} catch(UnsupportedEncodingException ex) {
 			logger.error("Unsupported encoding: UTF-8");
@@ -63,9 +56,21 @@ public class OpenLdapLdapServer extends AbstractLdapServer implements
 	public void setEncryptionAlgorithm(String encryptionAlgorithm) {
 		this.encryptionAlgorithm = encryptionAlgorithm;
 	}
-	
+
+    // TODO: test this.  Does it need encryption stuff?
 	@Override
-	public void afterPropertiesSet() throws Exception {
-		super.afterPropertiesSet();
+	public void changePassword(String username, String oldPassword,
+			String newPassword) throws LdapException, UserNotFoundException {
+		Connection conn = connectionFactory.getConnection();
+		try {
+			conn.open();
+			PasswordModifyOperation modify = new PasswordModifyOperation(conn);
+			Response<Credential> response = modify.execute(new PasswordModifyRequest(lookupDn(username), new Credential(oldPassword), new Credential(newPassword)));
+			if (response.getResultCode() != ResultCode.SUCCESS) {
+				// TODO: throw an exception?
+			}
+		} finally {
+			conn.close();
+		}
 	}
 }

@@ -1,7 +1,7 @@
 package net.unicon.cas.passwordmanager.flow;
 
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import net.unicon.cas.passwordmanager.PasswordManagerException;
 import net.unicon.cas.passwordmanager.service.PasswordManagerService;
 import org.springframework.webflow.action.AbstractAction;
@@ -29,10 +29,10 @@ public class LookupSecurityQuestionAction extends AbstractAction {
     	}
     	
     	MutableAttributeMap flowScope = requestContext.getFlowScope();
-    	Credentials creds = (Credentials)flowScope.get("credentials");
+    	Credential cred = (Credential)flowScope.get("credentials");
     	String username = null;
     	
-    	if(!(creds instanceof UsernamePasswordCredentials)) {
+    	if(!(cred instanceof UsernamePasswordCredential)) {
     		// see if the credentials are in the username flow scope object
     		if(flowScope.getString("username") != null) {
     			username = flowScope.getString("username");
@@ -40,12 +40,12 @@ public class LookupSecurityQuestionAction extends AbstractAction {
     			throw new PasswordManagerException("No username found trying to look up security questions.");
     		}
     	} else {
-    		UsernamePasswordCredentials upCreds = (UsernamePasswordCredentials) creds;
+    		UsernamePasswordCredential upCreds = (UsernamePasswordCredential) cred;
     		username = upCreds.getUsername();
     		flowScope.put("username", username);
     	}
 
-    	SecurityChallenge securityChallenge = passwordManagerService.getUserSecurityChallenge(username);
+    	SecurityChallenge securityChallenge = passwordManagerService.getSecurityChallenge(username);
     	
     	if(securityChallenge == null) {
     		// user doesn't have security questions set up

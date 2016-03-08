@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow abstract="true"
+      xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+  <view-state id="lockedOut" view="casPmLockedOut">
+    <transition to="pmExit" />
+  </view-state>
+    
+  <end-state id="helpDeskView" view="casPmHelpDesk"/>
+    
+  <end-state id="pmExit" />
+    
+  <global-transitions>
+    <transition on-exception="javax.naming.NameNotFoundException" to="helpDeskView" />
+    <transition on-exception="org.springframework.ldap.NameNotFoundException" to="helpDeskView" />
+    <transition on-exception="net.unicon.cas.passwordmanager.UserLockedOutException" to="lockedOut" />
+  </global-transitions>
+</flow>

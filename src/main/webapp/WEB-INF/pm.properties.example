@@ -1,0 +1,68 @@
+ldap.pm.security.requireCustomQuestion=false
+
+ldap.pm.recaptcha.privateKey=6Lc78uYSAAAAANlkBlEFwAOP8NR256jg2tgsVs2
+ldap.pm.recaptcha.publicKey=6Lc78uYSAAAAAFNFD285v4lJWxoeChjCWDXeEF9a
+# Whether recaptcha should include a noscript element.  Default true.
+#ldap.pm.recaptcha.includeNoscript=false
+
+# The password regular expression to use for validating new passwords
+#  default: ^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*$'}
+#  note: be sure to escape the back slashes
+ldap.pm.passwordRegex=^(?=.*\\p{Lu}\\p{M}*+)(?=.*\\p{Ll}\\p{M}*+)(?=.*[^\\p{Lu}\\p{Ll}\\p{M}]).{8,32}$
+
+# The number of attempts to allow before locking a user out.
+#  default: 999999
+ldap.pm.lockout.allowedAttempts=3
+# The number of seconds to lock a user out after the above incorrect attempts
+#  default: 0
+ldap.pm.lockout.delay=300
+
+### LDAP Pool Configuration Options ###
+ldap.pm.pool.minSize=3
+ldap.pm.pool.maxSize=10
+ldap.pm.pool.validateOnCheckIn=false
+ldap.pm.pool.validateOnCheckOut=false
+ldap.pm.pool.validatePeriodically=true
+# The number of seconds between validation
+ldap.pm.pool.validatePeriod=1800
+
+ldap.pm.pool.class=org.ldaptive.pool.SoftLimitConnectionPool
+
+# The ldap url to use for the Password Manager
+ldap.pm.ldapUrl=ldaps://gabriel.acu.local:636
+
+### Distiguished name cache settings ###
+# This will cache searches to lookup the persons dn with the userFilter
+#  below.  It should prevent repeated lookups in the changePassword flow
+#  for example.
+ldap.pm.dnCache.size=100
+# The number of seconds the results should stay in the cache
+ldap.pm.dnCache.ttl=600
+# How often the ttl should be enforced in seconds
+ldap.pm.dnCache.interval=300
+
+ldap.pm.baseDn=dc=acu,dc=local
+ldap.pm.userFilter=(sAMAccountName=%u)
+# Parameters for the userFilter separated by commas
+#ldap.pm.userFilterParams=
+# Whether to search the subtree.
+#  default: false
+ldap.pm.subtreeSearch=true
+# Whether to follow referrals
+#  default: false
+#ldap.pm.followReferrals=true
+
+### Security Question ###
+ldap.pm.question.default.1.answerAttr=strAcuEduPersonBannerId
+ldap.pm.question.default.1.question=What is your Banner Id?
+ldap.pm.question.default.2.answerAttr=acuEduPersonBirthDate
+ldap.pm.question.default.2.question=What is your date of birth? (mm/dd/yyyy)
+
+ldap.pm.question.custom.1.answerAttr=acuEduPersonSecurityAnswer
+ldap.pm.question.custom.1.questionAttr=acuEduPersonSecurityQuestion
+
+ldap.pm.server.class=net.unicon.cas.passwordmanager.ldap.ActiveDirectoryLdapServer
+ldap.pm.passwordAttr=unicodePwd
+ldap.pm.server.description=Active Directory
+# default: org.jasig.cas.authentication.handler.NoOpPrincipalNameTransformer
+#ldap.pm.server.principalNameTransformer.class=org.jasig.cas.authentication.handler.ConvertCasePrincipalNameTransformer

@@ -2,7 +2,9 @@ package net.unicon.cas.passwordmanager.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import net.unicon.cas.passwordmanager.UserNotFoundException;
 
 import net.unicon.cas.passwordmanager.service.ChangePasswordResult.Result;
 import net.unicon.cas.passwordmanager.flow.SecurityChallenge;
@@ -12,7 +14,7 @@ public class TestPasswordManagerService implements PasswordManagerService {
 
 	private final Random random = new Random();
 
-	@Override
+//	@Override
 	public SecurityChallenge getUserSecurityChallenge(String username) {
 		
 		SecurityQuestion q1 = new SecurityQuestion("Why?","Because");
@@ -28,7 +30,7 @@ public class TestPasswordManagerService implements PasswordManagerService {
 		return securityChallenge;		
 	}
 	
-	@Override
+//	@Override
 	public SecurityChallenge getDefaultSecurityChallenge(String username) {
 		
 		SecurityQuestion q1 = new SecurityQuestion("When is your birthday? (mm/yy/dddd)","5/20/1980");
@@ -90,5 +92,20 @@ public class TestPasswordManagerService implements PasswordManagerService {
 			SecurityChallenge securityChallenge) {
 		// nothing to see here
 	}
+
+    @Override
+    public void setDefaultSecurityQuestions(Map<String, String> questions) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public SecurityChallenge getSecurityChallenge(String username) throws UserNotFoundException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean verifySecurityQuestion(String username, SecurityQuestion question) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
 }

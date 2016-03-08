@@ -19,10 +19,9 @@
 
 <jsp:directive.include file="includes/top.jsp" />
 <link type="text/css" rel="stylesheet" href="<c:url value="/css/cas-pm.css" />" />
-<c:url var="loginUrl" value="/login">
-    <c:if test="${not empty service}">
-        <c:param name="service" value="${service}" />
-    </c:if>
+<c:url var="continueUrl" value="login">
+    <c:param name="_eventId" value="continue" />
+    <c:param name="execution" value="${flowExecutionKey}" />
 </c:url>
 
 <div id="admin" class="useradmin">
@@ -32,10 +31,10 @@
         <p class="note">
         <c:choose>
         <c:when test="${pmExtra eq 'wait'}">
-            <spring:message code="pm.setPassword.wait" arguments="${loginUrl}" />
+            <spring:message code="pm.setPassword.wait" arguments="${continueUrl}" />
         </c:when>
         <c:otherwise>
-            <spring:message code="pm.setPassword.text" arguments="${loginUrl}" />            
+            <spring:message code="pm.setPassword.text" arguments="${continueUrl}" />            
         </c:otherwise>
         </c:choose>        
         </p>

@@ -19,15 +19,12 @@
 
 <jsp:directive.include file="includes/top.jsp" />
 <link type="text/css" rel="stylesheet" href="<c:url value="/css/cas-pm.css" />" />
-<jsp:directive.page import="net.tanesha.recaptcha.ReCaptcha" />
-<jsp:directive.page import="net.tanesha.recaptcha.ReCaptchaFactory" />
-<c:set var="recaptchaPublicKey" scope="page" value="${recaptchaPublicKey}"/>
-<c:set var="recaptchaPrivateKey" scope="page" value="${recaptchaPrivateKey}"/>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 <c:url value="/login" var="formActionUrl" />
 
 <div id="admin" class="useradmin">
-    <form:form method="post" action="${formActionUrl}" cssClass="fm-v clearfix" modelAttribute="netIdBean">
+    <form:form method="post" action="${flowExecutionUrl}" cssClass="fm-v clearfix" modelAttribute="netIdBean">
    
         <h2><spring:message code="pm.forgotPassword.header" /></h2>
         <c:if test="${not empty forgotPasswordValidationError}">
@@ -45,17 +42,17 @@
         
         <div>
             <label class="fl-label" for="recaptcha"><spring:message code="pm.recaptcha.prompt" /></label>
-            <%
+						<div class="g-recaptcha" data-sitekey="${recaptchaSiteKey}" data-theme="light"></div>
+            <%--${recaptchaHtml}
+            
             ReCaptcha c = ReCaptchaFactory.newSecureReCaptcha((String)pageContext.getAttribute("recaptchaPublicKey"),
                     (String)pageContext.getAttribute("recaptchaPrivateKey"), true);
             out.print(c.createRecaptchaHtml(null, null));
-            %>
+            --%>
         </div>
         
         <div class="row btn-row">
-            <input type="hidden" name="execution" value="${flowExecutionKey}"/>
-            <input type="hidden" name="_eventId" value="submitId">
-            <input type="hidden" name="lt" value="${loginTicket}"/>
+            <input type="hidden" name="_eventId" value="submit">
             <input type="submit" tabindex="2" value="<spring:message code="pm.form.submit" />" accesskey="<spring:message code="pm.form.submit.accesskey" />" name="submit" class="btn-submit">
             <input type="reset" tabindex="3" value="<spring:message code="pm.form.clear" />" accesskey="<spring:message code="pm.form.clear.accesskey" />" name="reset" class="btn-reset">
         </div>

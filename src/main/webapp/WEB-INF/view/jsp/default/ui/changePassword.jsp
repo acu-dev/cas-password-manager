@@ -19,19 +19,14 @@
 
 <jsp:directive.include file="includes/top.jsp" />
 <link type="text/css" rel="stylesheet" href="<c:url value="/css/cas-pm.css" />" />
-<jsp:directive.page import="net.tanesha.recaptcha.ReCaptcha" />
-<jsp:directive.page import="net.tanesha.recaptcha.ReCaptchaFactory" />
-<c:set var="recaptchaPublicKey" scope="page" value="${recaptchaPublicKey}"/>
-<c:set var="recaptchaPrivateKey" scope="page" value="${recaptchaPrivateKey}"/>
-
-<c:url value="/login" var="formActionUrl" />
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 <div id="admin" class="useradmin">
-    <form:form method="post" action="${formActionUrl}" class="fm-v clearfix" modelAttribute="changePasswordBean">
+    <form:form method="post" action="${flowExecutionUrl}" class="fm-v clearfix" modelAttribute="changePasswordBean">
    
         <!-- Congratulations on bringing CAS online!  The default authentication handler authenticates where usernames equal passwords: go ahead, try it out.  -->
         <c:choose>
-            <c:when test="${pwdChangeForced}">
+            <c:when test="${forced}">
                 <h2><spring:message code="pm.changePassword.header.forced" /></h2>
             </c:when>
             <c:otherwise>
@@ -96,17 +91,17 @@
         <c:if test="${empty username}">
             <div>
                 <label class="fl-label" for="recaptcha"><spring:message code="pm.recaptcha.prompt" /></label>
-                <%
+								<div class="g-recaptcha" data-sitekey="${recaptchaSiteKey}" data-theme="light"></div>
+                <%--${recaptchaHtml}
+                
                     ReCaptcha c = ReCaptchaFactory.newSecureReCaptcha((String)pageContext.getAttribute("recaptchaPublicKey"),
                     		(String)pageContext.getAttribute("recaptchaPrivateKey"), true);
-                    out.print(c.createRecaptchaHtml(null, null));
-                %>
+                    out.print(c.createRecaptchaHtml(null, "white", 5));
+                --%>
             </div>
         </c:if>
         <div class="row btn-row">
-            <input type="hidden" value="${loginTicket}" name="lt">
-            <input type="hidden" value="submitChangePassword" name="_eventId">
-            <input type="hidden" value="${flowExecutionKey}" name="execution">
+            <input type="hidden" value="submit" name="_eventId">
             <input type="submit" tabindex="5" value="<spring:message code="pm.form.submit" />" accesskey="<spring:message code="pm.form.submit.accesskey" />" name="submit" class="btn-submit">
             <input type="reset" tabindex="6" value="<spring:message code="pm.form.clear" />" accesskey="<spring:message code="pm.form.clear.accesskey" />" name="reset" class="btn-reset">
         </div>

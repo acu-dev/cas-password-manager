@@ -23,7 +23,7 @@ public class SecurityQuestionValidator implements Validator {
 			errors.rejectValue(question,"pm.form.security-question.error.empty","Please enter a security question (default).");
 		}
 		
-		String response = securityQuestion.getResponseText();
+		String response = securityQuestion.getResponseAttribute();
 		
 		if(response == null || response.trim().isEmpty()) {
 			errors.rejectValue(response,"pm.form.security-response.error.empty","Please enter a response (default).");
