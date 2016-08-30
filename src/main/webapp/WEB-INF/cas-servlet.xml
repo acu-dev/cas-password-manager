@@ -310,6 +310,6 @@
   </webflow:flow-executor>
   
   <webflow:flow-registry id="pmFlowRegistry" flow-builder-services="builder">
-    <webflow:flow-location-pattern value="/WEB-INF/pm/*.xml" />
+    <webflow:flow-location-pattern value="/WEB-INF/webflow/pm/*.xml" />
   </webflow:flow-registry>
 </beans>
